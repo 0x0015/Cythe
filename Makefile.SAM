@@ -1,0 +1,52 @@
+OBJS	= src/Cythe.cpp.o \
+	  src/Util/AssetLoader.cpp.o \
+	  src/Util/audio.c.o \
+	  src/Util/flextGL.c.o \
+	  src/Util/InputHandler.cpp.o \
+	  src/Util/ComputeShader.cpp.o \
+	  src/Util/SimpleCppTextFileHandler/file.cpp.o \
+	  src/Util/SimpleCppTextFileHandler/fileManipulation.cpp.o \
+	  src/Util/SimpleCppTextFileHandler/getExecutablePath.cpp.o \
+	  src/DBuffer/BufferManager.cpp.o \
+	  src/DBuffer/Buffered.cpp.o \
+	  src/NFont/NFont.cpp.o \
+	  src/NFont/SDL_FontCache.c.o \
+	  src/TPScheduler/TPScheduler.cpp.o \
+	  src/GameObjects/FunctionalGameObject.cpp.o \
+	  src/GameObjects/GameObject.cpp.o \
+	  src/GameObjects/ParticlesObject.cpp.o \
+	  src/GameObjects/RenderObject.cpp.o \
+	  src/GameObjects/ShaderObject.cpp.o \
+	  src/GameObjects/Sprite.cpp.o \
+	  src/GameObjects/TextObject.cpp.o \
+	  src/GameObjects/Attributes/Collidable.cpp.o \
+	  src/GameObjects/Shapes/Shape.cpp.o \
+	  src/GameObjects/Shapes/Arc.cpp.o \
+	  src/GameObjects/Shapes/Ellipse.cpp.o \
+	  src/GameObjects/Shapes/Polygon.cpp.o \
+	  src/GameObjects/Shapes/Rectangle.cpp.o
+
+SHARED  = {SHARED}
+CXX	= {CXX}
+CC      = {CC}
+AR      = {AR}
+LIB     = {LIB}
+BUILD_CXX_FLAGS	 = {BUILD_CXX_FLAGS}
+BULID_CC_FLAGS   = {BUILD_CC_FLAGS}
+LINK_OPTS	 = {LINK_OPTS}
+
+all: $(OBJS)
+	mkdir -p bin
+	$(AR) rvs $(LIB) $(OBJS)
+	$(CXX) -shared -g -o $(SHARED) $(OBJS) $(BUILD_CXX_FLAGS) $(LINK_OPTS)
+
+
+%.cpp.o: %.cpp
+	$(CXX) $< $(BUILD_CXX_FLAGS) {RELEASE_FLAGS} -c -o $@
+
+%.c.o: %.c
+	$(CXX) $< $(BUILD_CXX_FLAGS) {RELEASE_FLAGS} -c -o $@
+
+clean:
+	rm -f $(OBJS) $(SHARED)
+	rm -rf -f bin
