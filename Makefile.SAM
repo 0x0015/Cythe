@@ -15,6 +15,7 @@ OBJS	= src/Cythe.cpp.o \
 	  src/GameObjects/FunctionalGameObject.cpp.o \
 	  src/GameObjects/GameObject.cpp.o \
 	  src/GameObjects/ParticlesObject.cpp.o \
+	  src/GameObjects/SubobjectContainer.cpp.o \
 	  src/GameObjects/RenderObject.cpp.o \
 	  src/GameObjects/ShaderObject.cpp.o \
 	  src/GameObjects/Sprite.cpp.o \

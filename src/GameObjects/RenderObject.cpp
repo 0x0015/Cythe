@@ -86,20 +86,6 @@ SDL_Color RenderObject::GetPixelColor(std::pair<int, int> pixelPos){
 	return(GPU_GetPixel(Image->target, pixelPos.first, pixelPos.second));
 }
 
-void RenderObject::printHirearchy(){
-	std::cout<<"{"<<std::endl;
-	for(auto& o : GameObjects){
-		if(dynamic_cast<RenderObject*>(o.get()) != 0){
-			// is a render object
-			std::cout<<typeid(*o).name()<<" "<<o->name;
-			dynamic_cast<RenderObject*>(o.get())->printHirearchy();
-		}else{
-			std::cout<<typeid(*o).name()<<" "<<o->name<<std::endl;
-		}
-	}
-	std::cout<<"}"<<std::endl;
-}
-
 RenderObject::~RenderObject(){
 	//for(int i=0;i<GameObjects.size();i++){
 	//	delete(GameObjects[i]);

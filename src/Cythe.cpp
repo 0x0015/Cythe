@@ -35,6 +35,7 @@ void Cythe::Update(){
 }
 
 void Cythe::Initialize(){
+	Logger::initLogger();
 	Logger::log("Initialize");
 
 	GPU_SetRequiredFeatures(GPU_FEATURE_RENDER_TARGETS);
@@ -69,8 +70,8 @@ void Cythe::Initialize(){
 	GPU_SetShapeBlendMode(GPU_BLEND_NORMAL);
 
 	Assets = std::make_shared<AssetLoader>();
-	//set assets main window
 	Input = std::make_shared<InputHandler>();
+	TPSchedule = std::make_shared<TPScheduler>();
 
 	RenderObject::Initialize();
 }
@@ -95,11 +96,11 @@ Cythe::~Cythe(){
 	GPU_FreeTarget(window);
 	GPU_Quit();
 	SDL_Quit();
+	//Logger::endLogger();
 }
 
 void Cythe::Run(){
 	Running = true;
-	TPSchedule = std::make_shared<TPScheduler>();
 	
 	Initialize();
 	Load();
@@ -113,6 +114,7 @@ void Cythe::Run(){
 		}
 		Draw();
 		TPSchedule->waitForQueue();
+		RemoveDeletedChildren();
 		currentBufferManager.swap();
 	}
 }
