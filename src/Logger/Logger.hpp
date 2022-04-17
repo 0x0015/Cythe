@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <type_traits>
+#include <sstream>
 #include "../GlobalParams.hpp"
 
 namespace Logger{
@@ -19,9 +20,11 @@ namespace Logger{
 			backLog += "\n";
 	}
 	template<typename T> inline void log_(const T& val, bool nl = true){
-		if constexpr(std::is_pointer<T>::value){	
-			std::string strT = std::to_string((size_t)((void*)val));
-			log_(strT, nl);
+		if constexpr(std::is_pointer<T>::value){
+			std::ostringstream oss;
+			oss << (void*)val;
+			//std::string strT = std::to_string((size_t)((void*)val));
+			log_(oss.str(), nl);
 		}else{
 			std::string strT = std::to_string(val);
 			log_(strT, nl);

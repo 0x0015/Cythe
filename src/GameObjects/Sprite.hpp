@@ -4,9 +4,9 @@
 
 class Sprite : public virtual GameObject{
 public:
-	std::pair<float, float> size;
-	float rotation;
-	std::pair<float, float> center;
+	Buffered<std::pair<float, float>> size;
+	Buffered<float> rotation;
+	Buffered<std::pair<float, float>> center;
 	//SDL_Surface* ImageSurface = 0;
 	//SDL_Texture* Texture = 0;
 	GPU_Image* Image;
@@ -20,13 +20,13 @@ public:
 	~Sprite();
 	//blueprint
 	static inline std::unordered_map<std::string, std::string> Blueprint = {
-		{"position", "std::pair<float,float>"},
+		{"position", "Buffered<std::pair<float,float>>"},
 		{"SpawnTime", "int"},
-		{"depth", "float"},
+		{"depth", "Buffered<float>"},
 		{"name", "std::string"},
-		{"size", "std::pair<float,float>"},
-		{"rotation", "float"},
-		{"center", "std::pair<float,float>"}
+		{"size", "Buffered<std::pair<float,float>>"},
+		{"rotation", "Buffered<float>"},
+		{"center", "Buffered<std::pair<float,float>>"}
 	};
 	std::unordered_map<std::string, void*> Create_Bp = {
 		{"position", &position},

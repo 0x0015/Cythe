@@ -1,29 +1,17 @@
 #include "RenderObject.hpp"
 #include "Sprite.hpp"
 #include "../Cythe.hpp"
+#include "../TPScheduler/TPScheduler.hpp"
 #include <algorithm>
 #include <execution>
 
 void RenderObject::Initialize(){
-	for(int i=0;i<GameObjects.size();i++){
-		GameObjects[i]->mainWindow = mainWindow;
-		GameObjects[i]->renderWindow = this;
+	for(auto& o : GameObjects){
+		o->mainWindow = mainWindow;
+		o->renderWindow = this;
 	}
-	//for(int i=0;i<GameObjects.size();i++){
-	//	GameObjects[i]->Initialize();
-	//}
-	if(parallelInitialize){
-		//std::for_each(std::execution::par_unseq, GameObjects.begin(), GameObjects.end(), [&mainWindow, &renderWindow](std::shared_ptr<GameObject> n){
-		//		n->mainWindow = mainWindow;
-		//		n->renderWindow = renderWindow;});
-		std::for_each(std::execution::par_unseq, GameObjects.begin(), GameObjects.end(), [](std::shared_ptr<GameObject> n){
-				n->Initialize();});
-	}else{
-		//std::for_each(std::execution::seq, GameObjects.begin(), GameObjects.end(), [&mainWindow, &renderWindow](std::shared_ptr<GameObject> n){
-		//		n->mainWindow = mainWindow;
-		//		n->renderWindow = renderWindow;});
-		std::for_each(std::execution::seq, GameObjects.begin(), GameObjects.end(), [](std::shared_ptr<GameObject> n){
-				n->Initialize();});
+	for(auto& o : GameObjects){
+		o->Initialize();
 	}
 }
 void RenderObject::Load(){
@@ -42,33 +30,26 @@ void RenderObject::Load(){
 	window = Image->target;
 	GPU_Clear(Image->target);
 	//GPU_AddDepthBuffer(ImageTarget);
-	if(parallelLoad){
-		std::for_each(std::execution::par_unseq, GameObjects.begin(), GameObjects.end(), [](std::shared_ptr<GameObject> n){
-				n->Load();});
-	}else{
-		std::for_each(std::execution::seq, GameObjects.begin(), GameObjects.end(), [](std::shared_ptr<GameObject> n){
-				n->Load();});
+	for(auto& o : GameObjects){
+		o->Load();
 	}
-	//for(int i=0;i<GameObjects.size();i++){
-	//	GameObjects[i]->Load();
-	//}
 }
 void RenderObject::Draw(){
 	
 	GPU_SetActiveTarget(Image->target);
 	GPU_Clear(Image->target);
-	for(int i=0;i<GameObjects.size();i++){
-		GameObjects[i]->Draw();
+	for(auto& o : GameObjects){
+		o->Draw();
 	}
 	GPU_SetActiveTarget(renderWindow->window);
 	GPU_Rect DestR;
-	DestR.x = position.first;
-	DestR.y = position.second;
-	DestR.w = size.first;
-	DestR.h = size.second;
+	DestR.x = position.get().first;
+	DestR.y = position.get().second;
+	DestR.w = size.get().first;
+	DestR.h = size.get().second;
 	SDL_Point RotP;
-	RotP.x = center.first;
-	RotP.y = center.second;
+	RotP.x = center.get().first;
+	RotP.y = center.get().second;
 	//SDL_RenderCopyEx(mainWindow->renderer, Texture, NULL, &DestR, (double)rotation, &RotP, SDL_FLIP_NONE);
 	
 	//GPU_Translate(0, 0, depth);
@@ -76,21 +57,12 @@ void RenderObject::Draw(){
 	GPU_SetBlendMode(Image, GPU_BLEND_NORMAL);
 	//GPU_SetBlendFunction(Image, GPU_FUNC_SRC_ALPHA, GPU_FUNC_ONE_MINUS_SRC_ALPHA, GPU_FUNC_ONE, GPU_FUNC_ZERO );
 	//GPU_SetRGBA(Image, 255, 100, 255, 127.5f + 127.5f*sin(SDL_GetTicks() / 1000.0f) * depth);
-	GPU_BlitRectX(Image, NULL, renderWindow->window, &DestR, rotation, center.first, center.second, GPU_FLIP_NONE);
+	GPU_BlitRectX(Image, NULL, renderWindow->window, &DestR, rotation, center.get().first, center.get().second, GPU_FLIP_NONE);
 	GPU_Flip(Image->target);
 }
 void RenderObject::Update(){
-	if(parallelUpdate){
-		auto end = std::remove_if(std::execution::par_unseq, GameObjects.begin(), GameObjects.end(), [](std::shared_ptr<GameObject> n){return(n->toDelete);});
-		//for_each(std::execution::seq, end, GameObjects.end(), [](GameObject* n){delete(n);});
-		GameObjects.erase(end, GameObjects.end());
-		std::for_each(std::execution::par_unseq, GameObjects.begin(), GameObjects.end(), [](std::shared_ptr<GameObject> n){n->Update();});
-	}else{
-		auto end = std::remove_if(std::execution::seq, GameObjects.begin(), GameObjects.end(), [](std::shared_ptr<GameObject> n){return(n->toDelete);});
-		//std::cout<<"removeIf "<<&*end<<" .end() "<<&*GameObjects.end()<<std::endl;
-		//for_each(std::execution::seq, end, GameObjects.end(), [](GameObject* n){std::cout<<"Deleting N: "<<n<<std::endl;delete(n);});//is this necessary?  find out next time
-		GameObjects.erase(end, GameObjects.end());
-		std::for_each(std::execution::seq, GameObjects.begin(), GameObjects.end(), [](std::shared_ptr<GameObject> n){n->Update();});
+	for(auto& o : GameObjects){
+		mainWindow->TPSchedule->queueFunction(1, [&](){o->Update();});
 	}
 	//for(int i=0;i<GameObjects.size();i++){
 	//	if(GameObjects[i]->toDelete){
@@ -102,9 +74,9 @@ void RenderObject::Update(){
 	//		GameObjects[i]->Update();
 	//	}
 	//}
-	std::sort(GameObjects.begin(), GameObjects.end(), [](const std::shared_ptr<GameObject> obj1, const std::shared_ptr<GameObject> obj2){
-			return(obj1->depth < obj2->depth);
-			});//sort of clunky, using std::sort to sort the z buffer, but I guess it's fine.
+	//std::sort(GameObjects.begin(), GameObjects.end(), [](const std::shared_ptr<GameObject> obj1, const std::shared_ptr<GameObject> obj2){
+	//		return(obj1->depth < obj2->depth);
+	//		});//sort of clunky, using std::sort to sort the z buffer, but I guess it's fine.
 
 }
 
@@ -116,13 +88,13 @@ SDL_Color RenderObject::GetPixelColor(std::pair<int, int> pixelPos){
 
 void RenderObject::printHirearchy(){
 	std::cout<<"{"<<std::endl;
-	for(int i=0;i<GameObjects.size();i++){
-		if(dynamic_cast<RenderObject*>(GameObjects[i].get()) != 0){
+	for(auto& o : GameObjects){
+		if(dynamic_cast<RenderObject*>(o.get()) != 0){
 			// is a render object
-			std::cout<<typeid(*GameObjects[i]).name()<<" "<<GameObjects[i]->name;
-			dynamic_cast<RenderObject*>(GameObjects[i].get())->printHirearchy();
+			std::cout<<typeid(*o).name()<<" "<<o->name;
+			dynamic_cast<RenderObject*>(o.get())->printHirearchy();
 		}else{
-			std::cout<<typeid(*GameObjects[i]).name()<<" "<<GameObjects[i]->name<<std::endl;
+			std::cout<<typeid(*o).name()<<" "<<o->name<<std::endl;
 		}
 	}
 	std::cout<<"}"<<std::endl;

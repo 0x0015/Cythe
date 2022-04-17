@@ -12,17 +12,17 @@ void Ellipse::Load(){
 
 void Ellipse::Draw(){
 	std::pair<float, float> rad;
-	if(size == std::pair<float, float>(0, 0)){
+	if(size.get() == std::pair<float, float>(0, 0)){
 		rad = std::pair<float, float>(radius, radius);
 	}else{
 		rad = size;
 	}
 
 	if(filled){
-		GPU_EllipseFilled(renderWindow->window, position.first, position.second, rad.first, rad.second, rotation, fillColor);
+		GPU_EllipseFilled(renderWindow->window, position.get().first, position.get().second, rad.first, rad.second, rotation.get(), fillColor.get());
 
 	}else{
-		GPU_Ellipse(renderWindow->window, position.first, position.second, rad.first, rad.second, rotation, fillColor);
+		GPU_Ellipse(renderWindow->window, position.get().first, position.get().second, rad.first, rad.second, rotation.get(), fillColor.get());
 	}
 }
 

@@ -4,6 +4,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_gpu.h>
 #include <memory>
+#include "../DBuffer/Buffered.hpp"
 
 class RenderObject;
 class Cythe;
@@ -12,9 +13,9 @@ class GameObject{
 public:
 	Cythe* mainWindow;
 	RenderObject* renderWindow;
-	std::pair<float, float> position;
+	Buffered<std::pair<float, float>> position;
 	int SpawnTime = 0;
-	float depth;
+	Buffered<float> depth;
 	std::string name = "";
 	bool toDelete = false;
 	void moveAtAngle(float angle, float units);
@@ -26,9 +27,9 @@ public:
 	virtual ~GameObject();
 	//blueprint
 	static inline std::unordered_map<std::string, std::string> Blueprint = {
-		{"position", "std::pair<float,float>"},
+		{"position", "Buffered<std::pair<float,float>>"},
 		{"SpawnTime", "int"},
-		{"depth", "float"},
+		{"depth", "Buffered<float>"},
 		{"name", "std::string"}
 	};
 	std::unordered_map<std::string, void*> Create_Bp = {

@@ -15,7 +15,7 @@ void ShaderObject::Initialize(){
 
 void ShaderObject::Load(){
 	shad = mainWindow->Assets->Shaders[std::pair<std::string, std::string>(frag, vert)];
-	Image = GPU_CreateImage(size.first, size.second, GPU_FORMAT_RGBA);
+	Image = GPU_CreateImage(size.get().first, size.get().second, GPU_FORMAT_RGBA);
 	blankTexture = GPU_CreateImage(renderResolution.first, renderResolution.second, GPU_FORMAT_RGBA);
 	//std::cout<<Image<<" "<<Image->target<<std::endl;
 	GPU_LoadTarget(Image);

@@ -7,7 +7,7 @@ using json = nlohmann::json;
 
 bool Collidable::CheckCollisions(std::shared_ptr<RenderObject> canv){
 	for(int i=0;i<CollisionPoints.size();i++){
-		std::pair<int, int> point = std::pair<int, int>((CollisionPoints[i].first * size.first) + position.first, (CollisionPoints[i].second * size.second) + position.second);
+		std::pair<int, int> point = std::pair<int, int>((CollisionPoints[i].first * size.get().first) + position.get().first, (CollisionPoints[i].second * size.get().second) + position.get().second);
 		//std::cout<<"checking collisions, position"<<point.first<<", "<<point.second<<std::endl;
 		if(canv->GetPixelColor(point).a != 0){
 			return(true);
@@ -41,7 +41,7 @@ void Collidable::getCollisionPointsFromJsonFile(std::string filename){
 
 void Collidable::Draw(){
 	for(int i=0;i<CollisionPoints.size();i++){
-		std::pair<int, int> point = std::pair<int, int>((CollisionPoints[i].first * size.first) + position.first, (CollisionPoints[i].second * size.second) + position.second);
+		std::pair<int, int> point = std::pair<int, int>((CollisionPoints[i].first * size.get().first) + position.get().first, (CollisionPoints[i].second * size.get().second) + position.get().second);
 		SDL_Color white = {255, 0, 0, 255};
 		GPU_Pixel(renderWindow->window, point.first, point.second, white);
 		//std::cout<<"checking collisions, position"<<point.first<<", "<<point.second<<std::endl;

@@ -2,8 +2,8 @@
 
 class Shape : public GameObject{
 public:
-	SDL_Color fillColor;
-	bool filled = false;
+	Buffered<SDL_Color> fillColor;
+	Buffered<bool> filled = false;
 	void Initialize();
 	void Load();
 	void Draw();

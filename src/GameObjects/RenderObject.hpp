@@ -1,29 +1,30 @@
 #pragma once
 #include "GameObject.hpp"
 #include <vector>
+#include <list>
 #include <memory>
 
 class RenderObject : public GameObject{
 public:
-	std::vector<std::shared_ptr<GameObject>> GameObjects;
+	std::list<std::shared_ptr<GameObject>> GameObjects;
 	template<typename T> std::shared_ptr<T> FindObject(std::string name = ""){	
 		if(name == ""){
-			for(int i=0;i<GameObjects.size();i++){
-				T* GOi = dynamic_cast<T*>(GameObjects[i].get());
+			for(auto& o : GameObjects){
+				T* GOi = dynamic_cast<T*>(o.get());
 				//std::cout<<"Dynamically casting"<<GOi<<std::endl;
 				if(GOi != 0){
 					//std::cout<<"Successfully dynamically casted"<<std::endl;
-					return(std::dynamic_pointer_cast<T>(GameObjects[i]));
+					return(std::dynamic_pointer_cast<T>(o));
 				}
 			}
 		}else{
-			for(int i=0;i<GameObjects.size();i++){
-				T* GOi = dynamic_cast<T*>(GameObjects[i].get());
+			for(auto& o : GameObjects){
+				T* GOi = dynamic_cast<T*>(o.get());
 				//std::cout<<"Dynamically casting name "<<name<<GOi<<std::endl;
 				if(GOi != 0){
 					//std::cout<<"Successfully dynamically casted"<<std::endl;
-					if(GameObjects[i]->name == name){
-						return(std::dynamic_pointer_cast<T>(GameObjects[i]));
+					if(o->name == name){
+						return(std::dynamic_pointer_cast<T>(o));
 					}
 				}
 			}
@@ -32,22 +33,22 @@ public:
 	}
 	template<typename T> std::shared_ptr<T> FindObjectRecursive(std::string name = ""){
 		if(name == ""){
-			for(int i=0;i<GameObjects.size();i++){
-				T* GOi = dynamic_cast<T*>(GameObjects[i].get());
+			for(auto& o : GameObjects){
+				T* GOi = dynamic_cast<T*>(o.get());
 				//std::cout<<"Dynamically casting"<<GOi<<std::endl;
 				if(GOi != 0){
 					//std::cout<<"Successfully dynamically casted"<<std::endl;
-					return(std::dynamic_pointer_cast<T>(GameObjects[i]));
+					return(std::dynamic_pointer_cast<T>(o));
 				}
 			}
 		}else{
-			for(int i=0;i<GameObjects.size();i++){
-				T* GOi = dynamic_cast<T*>(GameObjects[i].get());
+			for(auto& o : GameObjects){
+				T* GOi = dynamic_cast<T*>(o.get());
 				//std::cout<<"Dynamically casting name "<<name<<GOi<<std::endl;
 				if(GOi != 0){
 					//std::cout<<"Successfully dynamically casted"<<std::endl;
-					if(GameObjects[i]->name == name){
-						return(std::dynamic_pointer_cast<T>(GameObjects[i]));
+					if(o->name == name){
+						return(std::dynamic_pointer_cast<T>(o));
 					}
 				}
 			}
@@ -64,10 +65,10 @@ public:
 		return(0);
 	}
 	GPU_Target* window = 0;
-	std::pair<int, int> size;
+	Buffered<std::pair<float, float>> size;
 	std::pair<int, int> resolution;
-	float rotation;
-	std::pair<int, int> center;
+	Buffered<float> rotation;
+	Buffered<std::pair<float, float>> center;
 	//SDL_Surface* ImageSurface = 0;
 	//SDL_Texture* Texture = 0;
 	GPU_Image* Image;
@@ -75,9 +76,6 @@ public:
 	std::string ImagePath = "";
 	SDL_Color GetPixelColor(std::pair<int, int> pixelPos);
 	void printHirearchy();
-	bool parallelUpdate = false;
-	bool parallelLoad = false;
-	bool parallelInitialize = false;
 	void Initialize();
 	void Load();
 	void Draw();
@@ -85,14 +83,14 @@ public:
 	~RenderObject();
 	//blueprint
 	static inline std::unordered_map<std::string, std::string> Blueprint = {
-		{"position", "std::pair<float,float>"},
+		{"position", "Buffered<std::pair<float,float>>"},
 		{"SpawnTime", "int"},
-		{"depth", "float"},
+		{"depth", "Buffered<float>"},
 		{"name", "std::string"},
-		{"size", "std::pair<int,int>"},
+		{"size", "Buffered<std::pair<float,float>>"},
 		{"resolution", "std::pair<int,int>"},
-		{"rotation", "float"},
-		{"center", "std::pair<int,int>"},
+		{"rotation", "Buffered<float>"},
+		{"center", "Buffered<std::pair<float,float>>"},
 		{"GameObjects", "std::vector<std::shared_ptr<GameObject>>"}
 	};
 	std::unordered_map<std::string, void*> Create_Bp = {

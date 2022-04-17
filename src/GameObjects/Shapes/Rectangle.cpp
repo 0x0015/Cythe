@@ -12,10 +12,10 @@ void RectangleShape::Load(){
 
 void RectangleShape::Draw(){
 	GPU_Rect DestR;
-	DestR.x = position.first;
-	DestR.y = position.second;
-	DestR.w = size.first;
-	DestR.h = size.second;
+	DestR.x = position.get().first;
+	DestR.y = position.get().second;
+	DestR.w = size.get().first;
+	DestR.h = size.get().second;
 
 	if(!filled){
 		if(rounded){

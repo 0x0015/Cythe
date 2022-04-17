@@ -22,8 +22,9 @@ GameObject::~GameObject(){
 	Logger::log("Deleting GameObject ", name, ": ",this);
 }
 void GameObject::moveAtAngle(float angle, float units){
-	position.first += units * std::cos(angle * (std::numbers::pi/(float)180));
-	position.second += units * std::sin(angle * (std::numbers::pi/(float)180));
+	float pos1 = position.get().first + units * std::cos(angle * (std::numbers::pi/(float)180));
+	float pos2 = position.get().second + units * std::sin(angle * (std::numbers::pi/(float)180));
+	position = std::make_pair(pos1, pos2);
 	//std::cout<<"moveAtAngle:  angle="<<angle<<" move by ("<<units * std::cos(angle * ((float)std::numbers::pi/(float)180))<<", "<<units * std::sin(angle * ((float)std::numbers::pi/(float)180))<<std::endl;
 
 }

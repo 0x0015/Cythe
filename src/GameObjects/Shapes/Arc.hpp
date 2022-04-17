@@ -1,9 +1,9 @@
 #include "Shape.hpp"
 
 class Arc : public Shape{
-	float radius = 0;
-	float startAngle;
-	float endAngle;
+	Buffered<float> radius = 0;
+	Buffered<float> startAngle;
+	Buffered<float> endAngle;
 	void Initialize();
 	void Load();
 	void Draw();

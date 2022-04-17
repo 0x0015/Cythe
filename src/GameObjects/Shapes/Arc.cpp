@@ -11,9 +11,9 @@ void Arc::Load(){
 
 void Arc::Draw(){
 	if(filled){
-		GPU_Arc(renderWindow->window, position.first, position.second, radius, startAngle, endAngle, fillColor);
+		GPU_Arc(renderWindow->window, position.get().first, position.get().second, radius.get(), startAngle.get(), endAngle.get(), fillColor.get());
 	}else{
-		GPU_ArcFilled(renderWindow->window, position.first, position.second, radius, startAngle, endAngle, fillColor);
+		GPU_ArcFilled(renderWindow->window, position.get().first, position.get().second, radius.get(), startAngle.get(), endAngle.get(), fillColor.get());
 	}
 }
 

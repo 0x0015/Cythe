@@ -104,6 +104,8 @@ void Cythe::Run(){
 	Initialize();
 	Load();
 
+	currentBufferManager.swap();//put any values that were changed during Initialize into the backs of the buffer
+
 	while(Running){
 		Update();
 		for(auto& o : GameObjects){

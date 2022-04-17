@@ -12,15 +12,15 @@ void Polygon::Load(){
 
 void Polygon::Draw(){
 	std::vector<float> verts;
-	for(int i=0;i<vertices.size();i++){
-		verts.push_back((position.first + vertices[i].first));
-		verts.push_back((position.second + vertices[i].second));
+	for(int i=0;i<vertices.get().size();i++){
+		verts.push_back((position.get().first + vertices.get()[i].first));
+		verts.push_back((position.get().second + vertices.get()[i].second));
 	}
 	float* float_verts = &verts[0];
 	if(filled){
-		GPU_Polygon(renderWindow->window, vertices.size(), float_verts, fillColor);
+		GPU_Polygon(renderWindow->window, vertices.get().size(), float_verts, fillColor);
 	}else{
-		GPU_PolygonFilled(renderWindow->window, vertices.size(), float_verts, fillColor);
+		GPU_PolygonFilled(renderWindow->window, vertices.get().size(), float_verts, fillColor);
 
 	}
 }

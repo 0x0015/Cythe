@@ -15,19 +15,19 @@ void TextObject::Load(){
 }
 
 void TextObject::Update(){
-	font->setDefaultColor(drawColor);
+	font->setDefaultColor((SDL_Color)drawColor);
 }
 
 void TextObject::Draw(){
-	if(size == std::pair<float, float>(0, 0)){
-		font->draw(renderWindow->window, position.first, position.second, scale, text.c_str());
+	if(size.get() == std::pair<float, float>(0, 0)){
+		font->draw(renderWindow->window, position.get().first, position.get().second, scale.get(), text.get().c_str());
 	}else{
 		GPU_Rect DestR;
-		DestR.x = position.first;
-		DestR.y = position.second;
-		DestR.w = size.first;
-		DestR.h = size.second;
-		font->drawBox(renderWindow->window, DestR,scale, text.c_str());
+		DestR.x = position.get().first;
+		DestR.y = position.get().second;
+		DestR.w = size.get().first;
+		DestR.h = size.get().second;
+		font->drawBox(renderWindow->window, DestR,scale.get(), text.get().c_str());
 	}
 }
 
