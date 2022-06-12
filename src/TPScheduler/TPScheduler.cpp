@@ -47,10 +47,12 @@ TPScheduler::TPScheduler(uint16_t reservedThreadCount){
 }
 
 TPScheduler::~TPScheduler(){
+	Logger::log("Stopping ", threadPool.size(), " threads");
 	stop = true;
-	for(auto& o : threadPool){
-		waitingFunctions_semaphore.release();
-		o.join();
+	waitingFunctions_semaphore.release();
+	for(unsigned int i=0;i<threadPool.size();i++){
+		threadPool[i].join();
+		Logger::log("Successfully stopped thread ", i);
 	}
 	Logger::log("Successfully ended all threads in threadpool");
 }
